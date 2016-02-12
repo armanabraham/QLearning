@@ -1,4 +1,5 @@
-List of all function I wrote for RL
+# List of all function I wrote for RL. 
+# More functions were added later and those need to be added
 
 # ----------- File: GenerateTrialsUsingQLearning.R -----------
 
