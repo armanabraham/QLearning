@@ -1,0 +1,45 @@
+---
+output: html_document
+---
+# Data analysis using Reinforcement Learning
+
+```{r LoadChunks, echo=FALSE, message=FALSE}
+library(knitr)
+setwd("~/Desktop/Dropbox/Work/RIKEN_BSI_2012/Venus/Venus_R_analysis/QLearning")
+read_chunk('QLearning_Functions.R')
+```
+
+```{r DefineFunctions, echo=FALSE, message=FALSE}
+<<DefineFunctions>>
+```
+
+## 1. How  $\beta$ (inverse temperature) affects the slope of Softmax function
+**What happens to the slope Softmax function when the beta is small and is close to 0, compared to when the beta is large, such as above 5 or closer to 10?** The figure below shows how proportion of rightward choices change as a function of relative value (value difference between Right and Left) and beta. When value for right choice is larger than for left choice, here should be greater probability of choosing right. However, that probability depends on beta. Small betas, such as when it is 0.1, confine probabilities of rightwawrd choice to smaller values, whereas increase in beta increases the slope of the psychometric function and thus larger probabilities are associated with the same relative value. In other words, smaller beta values lead to more randomness, whereas larger beta values 
+
+```{r ImpactOfBeta, dev='pdf', fig.width=5, fig.height=6, echo=FALSE, fig.pos='h', fig.show='hold', fig.cap='Probability of rightward choices as a function of relative value, which is the difference between the action value of choosing right version choosing left.'}
+QLearning_ImpactOfBeta()
+```
+**Figure 1:** Probability of rightward choices as a function of relative value, which is the difference between the action value of choosing right version choosing left. 
+
+## 2. How $\alpha$ (learning rate) affects action values and choice probabilities 
+**To answer, we will randomly generate trials on left and right with equal probability first**. Then using reinforcement learning we will try to guess on which side the randomly generated stimuli are presented, trial by trial. As we respond on each trial, the value function will update itself based on whether the response was a success of failure. The updating of action value function $Q(x)$ will be done according to the following formula: 
+
+$$Q_{t+1}(x)=Q_{t}(x) + \alpha(R_{t} - Q_{t}(x))$$
+
+where $x$ is the response side (left or right), $t$ is the trial number, $\alpha$ is the learning rate and $r$ is the reward on current trial (1 if response was corect or 0 otherwise). The value function is only updated for the side which was responded, while the opposite side value remains unchanged. This way of Q-Learning has also been used in {Seo:2009jl} (you have a highlight there on p. 7280). CONTINUE FROM HERE. CHECK YOUR CODE AND SEE WHICH WAY YOU COMPUTED Q
+Basically, we want to use the reinforcement learning to "figure out" how to respond to randomly generated trials. This is a task for which reinforcement learning is not suited because each trial is generated with 50% probability while the RL model will try to learn from past responses which side to respond to. It should therefore be very ineffective at that task. Nevertheless, this can help us to undersrand what happens when we use different $\alpha$ and $\beta$ values.  
+``` {r ImpactOfAlpha, dev='pdf', fig.width=5, fig.height=6}
+run <- QLearning_GenerateTrials(alpha=0.2, beta=5, 300, rightwardBias=0.5)
+head(run)
+#QLearning_OneRunLhood(c(0.2,5),run, plotProbabilities=T)
+````
+
+
+<!--- Generate math using MathJax
+$\frac{1}{n} \sum_{i=1}^{n}x_{i}$
+--->
+
+<!---- How to convert this file into LaTex using command line
+pandoc -s QLearning_Results_v1.md -t latex -o test.tex
+pandoc -s test.tex -t latex -o test2.pdf
+--->
